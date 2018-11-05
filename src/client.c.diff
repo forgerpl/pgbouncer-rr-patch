@@ -18,13 +18,13 @@ index 2a46e0d..4363736 100644
 @@ -678,6 +678,14 @@ static bool handle_client_work(PgSocket *client, PktHdr *pkt)
  	if (client->pool->db->admin)
  		return admin_handle_client(client, pkt);
- 
+
 +        /* pgbouncer-rr extensions: query rewrite & client connection routing */
++        route_client_connection(client, pkt);
 +        if (pkt->type == 'Q' || pkt->type == 'P') {
 +                if (!rewrite_query(client, pkt)) {
 +                        return false;
 +                }
-+                route_client_connection(client, pkt);
 +        }
 +
  	/* acquire server */
